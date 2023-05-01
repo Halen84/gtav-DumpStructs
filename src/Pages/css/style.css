@@ -483,13 +483,16 @@ dump-tree {
 }
 
 .dump-error-msg {
+    position: fixed;
+    inset: 20vh 0 auto 0;
     font-size: 1.5rem;
     padding: 0.5em;
-    margin: auto;
+    margin: 0 auto 0 auto;
     text-align: center;
     background: rgb(221 19 19 / 41%);
     border-radius: 8px;
     width: fit-content;
+    z-index: 1000;
 }
 
 .dump-tree-root #contents {
@@ -527,6 +530,7 @@ dump-tree {
 }
 
 .dump-tree-root #tree {
+    position: relative;
     background-color: var(--theme-background-alt);
     font-family: var(--default-monospace-font-family);
     overflow: auto;
@@ -542,7 +546,7 @@ dump-tree {
 }
 
 .dump-tree-root #tree > ul,
-.dump-tree-root #tree > * {
+.dump-tree-root #tree > p {
     padding: 0.67em;
     margin: 0;
 }
@@ -553,63 +557,105 @@ dump-tree {
 }
 
 .dump-entry {
-    display: flex;
+    position: relative;
+    display: inline-flex;
     column-gap: 0.5em;
     align-items: center;
     margin-top: 0.3em;
+    margin-left: 1.5em;
 }
 
-.dump-entry-icon {
-    flex-shrink: 0;
-    height: 16px;
-    width: 16px;
-    display: block;
-    background-size: 100%;
-}
-
-.dump-entry-icon-container {
+.dump-entry-parent::before {
+    content: "";
     cursor: pointer;
-    background: no-repeat center/80% url("../img/container-close-icon.svg");
+    position: absolute;
+    left: -1.5em;
+    height: 1.0em;
+    width: 1.0em;
     filter: var(--theme-svg-icon-filter);
+    background: no-repeat center/80% url("../img/container-open-icon.svg");
 }
 
-.dump-entry-icon-container:hover {
+.dump-entry-parent:hover:not(:has(*:hover))::before {
+    /* when hovering the parent but not any children
+    (i.e. hovering the open/close icon not the entry button) */
     filter: invert(0.35);
 }
 
-details[open] > summary .dump-entry-icon-container {
-    background-image: url("../img/container-open-icon.svg");
+.dump-entry-li[data-collapsed] > .dump-entry-parent::before {
+    background-image: url("../img/container-close-icon.svg");
 }
 
-.dump-entry-icon-struct {
-    background-image: url("../img/struct-icon.svg");
-}
-
-.dump-entry-icon-enum {
-    background-image: url("../img/enum-icon.svg");
-}
-
-.dump-entry-icon-diff-added {
-    background-image: url("../img/diff-added.svg");
-    filter: var(--theme-svg-icon-filter);
-}
-
-.dump-entry-icon-diff-modified {
-    background-image: url("../img/diff-modified.svg");
-    filter: var(--theme-svg-icon-filter);
-}
-
-.dump-entry-icon-diff-removed {
-    background-image: url("../img/diff-removed.svg");
-    filter: var(--theme-svg-icon-filter);
+.dump-entry-li[data-collapsed] > ul {
+    display: none !important;
+    visibility: collapse !important;
 }
 
 .dump-entry-button {
-    display: flex;
+    position: relative;
+    display: inline-flex;
     column-gap: 0.5em;
     align-items: center;
-    margin-top: 0.3em;
     scroll-margin: 3rem 1rem;
+    text-indent: 1.25em;
+}
+
+.dump-entry-button::before {
+    content: "";
+    position: absolute;
+    left: 0.25em;
+    margin: auto;
+    height: 1.0em;
+    width: 1.0em;
+    background: no-repeat center;
+    background-size: 100%;
+}
+
+.dump-entry-button-struct::before {
+    background-image: url("../img/struct-icon.svg");
+}
+
+.dump-entry-button-enum::before {
+    background-image: url("../img/enum-icon.svg");
+}
+
+.dump-entry-button-diff-added,
+.dump-entry-button-diff-modified,
+.dump-entry-button-diff-removed {
+    /* indent the button text more to fit both the struct/enum and diff icons */
+    text-indent: 2.5em;
+}
+
+.dump-entry-button-diff-added::after,
+.dump-entry-button-diff-modified::after,
+.dump-entry-button-diff-removed::after {
+    content: "";
+    position: absolute;
+    left: 0.25em;
+    margin: auto;
+    height: 1.0em;
+    width: 1.0em;
+    background: no-repeat center;
+    filter: var(--theme-svg-icon-filter);
+}
+
+.dump-entry-button-diff-added::before,
+.dump-entry-button-diff-modified::before,
+.dump-entry-button-diff-removed::before {
+    /* offset the struct/enum icon to fit the diff icon before */
+    left: 1.5em;
+}
+
+.dump-entry-button-diff-added::after {
+    background-image: url("../img/diff-added.svg");
+}
+
+.dump-entry-button-diff-modified::after {
+    background-image: url("../img/diff-modified.svg");
+}
+
+.dump-entry-button-diff-removed::after {
+    background-image: url("../img/diff-removed.svg");
 }
 
 :focus-visible .dump-entry-button[data-tree-focus] {
@@ -755,22 +801,81 @@ details[open] > summary .dump-entry-icon-container {
     }
 }
 
-
-.loading-spinner {
-    --size: min(16vh, 16vw);
-    width: var(--size);
-    height: var(--size);
-    position: fixed;
-    inset: 0;
-    margin: auto;
-    background: rgba(var(--theme-accent-rgb), 0.1) url("../img/logo.svg") no-repeat 50% 50%;
-    background-size: 70%;
-    border-radius: calc(var(--size) / 2);
-    animation: loading-spinner-anim 0.75s infinite cubic-bezier(.39,.58,.57,1);
+.dump-entry.placeholder {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
-@keyframes loading-spinner-anim {
-    to {
-        transform: rotate(360deg) scale(1.5);
+.dump-entry.placeholder > .dump-entry-button {
+    width: 8em;
+    height: 1.333em;
+}
+
+.placeholder {
+    background: var(--theme-background-alt-focus);
+    pointer-events: none;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.placeholder::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 50%;
+    z-index: 2;
+    width: 200%;
+    margin-left: -100%;
+    pointer-events: none;
+    content: "";
+    background: linear-gradient(
+            to right,
+            rgba(var(--theme-accent-rgb), 0) 37%,
+            rgba(var(--theme-accent-rgb), 0.35) 50%,
+            rgba(var(--theme-accent-rgb), 0) 63%)
+    50% 50%;
+    animation: placeholder-animation 1.0s linear infinite;
+}
+
+.placeholder-do-fade-out {
+    position: absolute;
+    animation: placeholder-fade-out 0.1s linear forwards;
+}
+
+.placeholder-do-fade-in,
+.dump-error-msg {
+    animation: placeholder-fade-in 0.1s linear forwards;
+}
+
+@keyframes placeholder-animation {
+    0% {
+        transform: translate3d(-30%, 0, 0);
+    }
+    100% {
+        transform: translate3d(30%, 0, 0);
+    }
+}
+
+@keyframes placeholder-fade-out {
+    0% {
+        visibility: visible;
+        opacity: 1;
+    }
+    99% {
+        visibility: visible;
+    }
+    100% {
+        visibility: collapse;
+        opacity: 0;
+    }
+}
+
+@keyframes placeholder-fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
     }
 }
