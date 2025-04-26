@@ -19,6 +19,42 @@
     ],
     "gta5": [
         {
+            "build": "812g9",
+            "aliases": [""]
+        },
+        {
+            "build": "811g9",
+            "aliases": ["Enhanced™"]
+        },
+        {
+            "build": "3442",
+            "aliases": []
+        },
+        {
+            "build": "3411",
+            "aliases": []
+        },
+        {
+            "build": "3407",
+            "aliases": ["Agents of Sabotage", "mp2024_02", "mp2024_02_g9ec"]
+        },
+        {
+            "build": "3323",
+            "aliases": ["BattlEye"]
+        },
+        {
+            "build": "3258",
+            "aliases": ["Bottom Dollar Bounties", "mp2024_01", "mp2024_01_g9ec"]
+        },
+        {
+            "build": "3179",
+            "aliases": []
+        },
+        {
+            "build": "3095",
+            "aliases": ["The Chop Shop", "mp2023_02", "mp2023_02_g9ec"]
+        },
+        {
             "build": "3028",
             "aliases": []
         },
@@ -86,6 +122,16 @@
     "mp3": [
         {
             "build": "1.0.0.255",
+            "aliases": []
+        }
+    ],
+    "rdr2": [
+        {
+            "build": "1.0.42.46611",
+            "aliases": []
+        },
+        {
+            "build": "1.0.40.57107",
             "aliases": []
         }
     ],
